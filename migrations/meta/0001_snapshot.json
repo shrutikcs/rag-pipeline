@@ -1,0 +1,67 @@
+{
+  "id": "8153f4de-1dcb-422a-b2c4-5642c5700184",
+  "prevId": "09c5fbb9-c572-4216-a7d1-3b62d0f2157b",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.documents": {
+      "name": "documents",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "content": {
+          "name": "content",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "embedding": {
+          "name": "embedding",
+          "type": "vector(300)",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "embeddingIndex": {
+          "name": "embeddingIndex",
+          "columns": [
+            {
+              "expression": "embedding",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last",
+              "opclass": "vector_cosine_ops"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "hnsw",
+          "with": {}
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {},
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}
