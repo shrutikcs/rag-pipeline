@@ -1,18 +1,16 @@
-import type { Metadata } from "next";
-import { Bricolage_Grotesque, Geist } from "next/font/google";
-import "./globals.css";
 import { cn } from "@/lib/utils";
+import {
+  ClerkProvider
+} from "@clerk/nextjs";
+import type { Metadata } from "next";
+import { Bricolage_Grotesque } from "next/font/google";
+import "./globals.css";
+import Navigation from "@/components/navigation";
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 const briGro = Bricolage_Grotesque({
   subsets: ["latin"],
 });
-// const briGro = Bricolage_Grotesque({
-//   subsets: ["latin"],
-// });
-
-
 
 export const metadata: Metadata = {
   title: "RAG Chat-Bot",
@@ -27,9 +25,15 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={cn("h-full", "antialiased", briGro.className, "font-sans", geist.variable)}
+      className={cn("dark h-full", "antialiased", briGro.className)}
+      suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <ClerkProvider>
+          <Navigation/>
+          {children}
+        </ClerkProvider>
+      </body>
     </html>
   );
 }

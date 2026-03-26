@@ -121,10 +121,36 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
+
   html {
     @apply font-sans;
+    color-scheme: dark;
+  }
+
+  /* Minimal Scrollbar */
+  .minimal-scrollbar::-webkit-scrollbar {
+    width: 2dvh;
+    height: 2px;
+  }
+  .minimal-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .minimal-scrollbar::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 2px;
+  }
+  .minimal-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: var(--muted-foreground);
+  }
+  .minimal-scrollbar::-webkit-scrollbar-button {
+    display: none;
+  }
+  .minimal-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
   }
 }

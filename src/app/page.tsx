@@ -1,65 +1,85 @@
-import Image from "next/image";
+import { Show } from "@clerk/nextjs";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { ArrowRight, Bot, Sparkles, Zap } from "lucide-react";
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="flex-1 flex flex-col items-center justify-center relative overflow-hidden bg-background">
+      {/* Background Decorative Elements */}
+      <div className="absolute top-0 -left-4 w-72 h-72 bg-primary/20 rounded-full blur-3xl animate-pulse" />
+      <div className="absolute bottom-0 -right-4 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
+
+      <main className="relative z-10 w-full max-w-5xl px-6 py-20 flex flex-col items-center text-center">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-primary/20 bg-primary/5 text-primary text-sm font-medium mb-8 animate-in fade-in slide-in-from-bottom-3 duration-1000">
+          <Sparkles className="w-4 h-4" />
+          <span>Next-Generation RAG Technology</span>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+
+        <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-6 bg-linear-to-b from-foreground to-foreground/70 bg-clip-text text-transparent">
+          The Chat Bot That <br />
+          <span className="text-primary italic">Doesn't Suck.</span>
+        </h1>
+
+        <p className="max-w-2xl text-lg md:text-xl text-muted-foreground mb-10 mx-auto">
+          Built with advanced Retrieval-Augmented Generation to provide
+          accurate, context-aware answers from your documentation and beyond.
+        </p>
+
+        <div className="flex flex-col sm:flex-row items-center gap-4">
+          <Link href="/chat">
+            <Button size="lg" className="h-12 px-8 text-lg gap-2">
+              Start Chatting <ArrowRight className="w-5 h-5" />
+            </Button>
+          </Link>
+
+          <Show when="signed-out">
+            <Link href="/chat">
+              <Button size="lg" variant="outline" className="h-12 px-8 text-lg">
+                View Demo
+              </Button>
+            </Link>
+          </Show>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-24 w-full">
+          <FeatureCard
+            icon={<Zap className="w-6 h-6 text-primary" />}
+            title="Ultra-Fast"
+            description="Responses delivered in milliseconds thanks to optimized vector search."
+          />
+          <FeatureCard
+            icon={<Bot className="w-6 h-6 text-primary" />}
+            title="Context Aware"
+            description="The AI understands your specific data and maintains deep context."
+          />
+          <FeatureCard
+            icon={<Sparkles className="w-6 h-6 text-primary" />}
+            title="Premium Design"
+            description="A sleek, modern interface designed for focus and productivity."
+          />
         </div>
       </main>
+    </div>
+  );
+}
+
+function FeatureCard({
+  icon,
+  title,
+  description,
+}: {
+  icon: React.ReactNode;
+  title: string;
+  description: string;
+}) {
+  return (
+    <div className="group p-6 rounded-2xl border border-border/50 bg-card/50 backdrop-blur-sm transition-all hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 text-left">
+      <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+        {icon}
+      </div>
+      <h3 className="text-xl font-semibold mb-2">{title}</h3>
+      <p className="text-muted-foreground">{description}</p>
     </div>
   );
 }
