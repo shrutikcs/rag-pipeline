@@ -4,12 +4,23 @@ import { z } from "zod";
 import type { LanguageModel } from "ai";
 
 // ─── Models ──────────────────────────────────────────────────────────────────
-// Two models to distribute token load and stay within rate limits.
-// - FAST: lighter metrics that need less reasoning (faithfulness, answer relevance)
-// - SMART: heavier reasoning metrics (context precision, context recall)
+// Distribute token load across all models that support structured output
+// to avoid hitting rate limits.
 
-const MODEL_FAST: LanguageModel = groq("openai/gpt-oss-20b");
-const MODEL_SMART: LanguageModel = groq("openai/gpt-oss-120b");
+const EVAL_MODELS = [
+  "openai/gpt-oss-20b",
+  "openai/gpt-oss-120b",
+  "openai/gpt-oss-safeguard-20b",
+  "meta-llama/llama-4-scout-17b-16e-instruct",
+];
+
+let currentModelIndex = 0;
+
+export function getNextEvalModel(): LanguageModel {
+  const modelId = EVAL_MODELS[currentModelIndex];
+  currentModelIndex = (currentModelIndex + 1) % EVAL_MODELS.length;
+  return groq(modelId);
+}
 
 // ─── Shared schema ───────────────────────────────────────────────────────────
 
@@ -42,7 +53,7 @@ export async function evaluateFaithfulness(
   context: string
 ): Promise<EvalResult> {
   return runEval(
-    MODEL_FAST,
+    getNextEvalModel(),
     "You are a RAG evaluator. Score FAITHFULNESS: are all answer claims supported by the context? Reply with JSON {score: 0-1}.",
     `QUERY: ${query}\nCONTEXT: ${context}\nANSWER: ${answer}`
   );
@@ -57,7 +68,7 @@ export async function evaluateAnswerRelevance(
   context: string
 ): Promise<EvalResult> {
   return runEval(
-    MODEL_FAST,
+    getNextEvalModel(),
     "You are a RAG evaluator. Score ANSWER RELEVANCE: does the answer directly address the query? Reply with JSON {score: 0-1}.",
     `QUERY: ${query}\nANSWER: ${answer}`
   );
@@ -76,7 +87,7 @@ export async function evaluateContextPrecision(
     .join("\n\n");
 
   return runEval(
-    MODEL_SMART,
+    getNextEvalModel(),
     "You are a RAG evaluator. Score CONTEXT PRECISION: what fraction of the chunks are relevant to the query? Reply with JSON {score: 0-1}.",
     `QUERY: ${query}\nCHUNKS:\n${numberedChunks}`
   );
@@ -96,7 +107,7 @@ export async function evaluateContextRecall(
     .join("\n\n");
 
   return runEval(
-    MODEL_SMART,
+    getNextEvalModel(),
     "You are a RAG evaluator. Score CONTEXT RECALL: how much of the ground-truth answer is supported by the retrieved chunks? Reply with JSON {score: 0-1}.",
     `QUERY: ${query}\nGROUND TRUTH: ${groundTruth}\nCHUNKS:\n${numberedChunks}`
   );

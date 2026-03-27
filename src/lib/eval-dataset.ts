@@ -1,7 +1,7 @@
 import { generateText } from "ai";
 import { groq } from "@ai-sdk/groq";
 import { searchDocuments } from "./search";
-import { runRagAssessment, RagAssessmentResult } from "./eval";
+import { runRagAssessment, RagAssessmentResult, getNextEvalModel } from "./eval";
 
 // ─── Fixed test dataset ───────────────────────────────────────────────────────
 // 18 gold/XAUUSD Q&A pairs covering the headline topics from the PDF.
@@ -124,7 +124,7 @@ async function runSingleEval(item: DatasetItem): Promise<BatchEvalItemResult> {
 
   // 2. Generate an answer (sequential — one call at a time per item)
   const { text: answer } = await generateText({
-    model: groq("openai/gpt-oss-20b"),
+    model: getNextEvalModel(),
     system:
       "You are a helpful assistant. Answer the user's question based on the provided context. " +
       "Be concise and accurate.",
@@ -158,15 +158,18 @@ function avg(nums: number[]) {
 export async function runBatchEval(
   dataset: DatasetItem[] = testDataset
 ): Promise<BatchEvalResult> {
-  // Fully serialized: one item at a time with a delay to respect rate limits.
-  // Each item makes 5 sequential LLM calls (1 answer + 4 metrics).
   const results: BatchEvalItemResult[] = [];
   const DELAY_MS = 2000; // 2s between items
+  const CHUNK_SIZE = 2; // Process 3 items concurrently
 
-  for (let i = 0; i < dataset.length; i++) {
-    console.log(`[eval] Item ${i + 1}/${dataset.length}: ${dataset[i].query.slice(0, 60)}…`);
-    results.push(await runSingleEval(dataset[i]));
-    if (i < dataset.length - 1) await sleep(DELAY_MS);
+  for (let i = 0; i < dataset.length; i += CHUNK_SIZE) {
+    const chunk = dataset.slice(i, i + CHUNK_SIZE);
+    console.log(`[eval] Processing items ${i + 1} to ${Math.min(i + CHUNK_SIZE, dataset.length)}/${dataset.length}…`);
+    
+    const chunkResults = await Promise.all(chunk.map((item) => runSingleEval(item)));
+    results.push(...chunkResults);
+    
+    if (i + CHUNK_SIZE < dataset.length) await sleep(DELAY_MS);
   }
 
   const faithfulnessScores = results.map((r) => r.metrics.faithfulness.score);
