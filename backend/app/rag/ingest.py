@@ -18,6 +18,7 @@ embed_model = GoogleGenAIEmbedding(
     model_name="gemini-embedding-001",
 )
 
+
 # ── vector store (Neon pgvector) ──────────────────────────────────
 def _make_vector_store() -> PGVectorStore:
     url = make_url(settings.DATABASE_URL)
@@ -58,7 +59,7 @@ def ingest() -> VectorStoreIndex:
     vector_store = _make_vector_store()
     storage_context = StorageContext.from_defaults(vector_store=vector_store)
 
-    index = VectorStoreIndex(
+    index = VectorStoreIndex(  # iterates through every node, calls gemini api for each chunch to turn into vector, uploads the vector and original text to postgres, creates the searchable index.
         nodes=nodes,
         storage_context=storage_context,
         embed_model=embed_model,
