@@ -21,5 +21,5 @@ def run_ingest():
 @router.post("/query")
 def run_query(body: QueryRequest):
     """Retrieve context and generate an LLM answer."""
-    response = query_pipeline(body.query)
-    return {"response": response}
+    result = query_pipeline(body.query)
+    return result  # {"answer": "...", "contexts": ["...", ...]}

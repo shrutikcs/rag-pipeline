@@ -28,12 +28,18 @@ def _get_retriever():
     return _retriever
 
 
-def query_pipeline(query: str) -> str:
-    """Retrieve relevant nodes and generate an LLM answer."""
+def query_pipeline(query: str) -> dict:
+    """Retrieve relevant nodes and generate an LLM answer.
+
+    Returns
+    -------
+    dict with keys: answer (str), contexts (list[str])
+    """
 
     # 1. Retrieve (hybrid + rerank)
     nodes = _get_retriever().retrieve(query)
-    context = "\n\n---\n\n".join(n.get_content() for n in nodes)
+    contexts = [n.get_content() for n in nodes]
+    context = "\n\n---\n\n".join(contexts)
 
     # 2. Build messages
     messages = [
@@ -43,4 +49,4 @@ def query_pipeline(query: str) -> str:
 
     # 3. Generate
     response = _llm.chat(messages)
-    return response.message.content
+    return {"answer": response.message.content, "contexts": contexts}

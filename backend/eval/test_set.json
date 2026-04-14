@@ -1,0 +1,22 @@
+[
+  {
+    "question": "What are the main factors that drive the price of XAUUSD?",
+    "ground_truth": "The main factors driving XAUUSD include US dollar strength, real interest rates, inflation expectations, central bank gold reserves, geopolitical uncertainty, and global risk sentiment."
+  },
+  {
+    "question": "How does the US Federal Reserve interest rate policy affect gold prices?",
+    "ground_truth": "When the Federal Reserve raises interest rates, gold tends to decline because higher rates increase the opportunity cost of holding a non-yielding asset. Conversely, rate cuts or dovish signals tend to support gold prices."
+  },
+  {
+    "question": "What technical indicators are commonly used for XAUUSD analysis?",
+    "ground_truth": "Common technical indicators for XAUUSD include moving averages (50-day and 200-day), RSI (Relative Strength Index), MACD, Fibonacci retracement levels, and Bollinger Bands."
+  },
+  {
+    "question": "What is the relationship between XAUUSD and the US Dollar Index (DXY)?",
+    "ground_truth": "XAUUSD and the DXY generally have an inverse correlation. When the US dollar strengthens, gold priced in dollars tends to fall, and when the dollar weakens, gold prices typically rise."
+  },
+  {
+    "question": "What role does geopolitical risk play in XAUUSD price movements?",
+    "ground_truth": "Gold is considered a safe-haven asset. During periods of heightened geopolitical risk such as wars, trade conflicts, or political instability, investors flock to gold, driving XAUUSD prices higher."
+  }
+]
